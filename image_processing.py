@@ -180,6 +180,7 @@ def brightness_division():
     img_arr = np.clip(img_arr, 0, 255)
     new_arr = img_arr.astype('uint8')
     new_img = Image.fromarray(new_arr)
+    new_img = new_img.convert("RGB")
     new_img.save("static/img/img_now.jpg")
 
 
@@ -210,30 +211,33 @@ def convolution(img, kernel):
 
 
 def edge_detection():
-    img = Image.open("static/img/img_now.jpg")
-    img_arr = np.asarray(img, dtype=np.int)
+    img = Image.open("static/img/img_now.jpg").convert('L')
+    img_arr = np.array(img)
     kernel = np.array([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]])
-    new_arr = convolution(img_arr, kernel)
+    new_arr = cv2.filter2D(img_arr, -1, kernel)
     new_img = Image.fromarray(new_arr)
     new_img.save("static/img/img_now.jpg")
 
 
 def blur():
-    img = Image.open("static/img/img_now.jpg")
-    img_arr = np.asarray(img, dtype=np.int)
-    kernel = np.array(
-        [[0.0625, 0.125, 0.0625], [0.125, 0.25, 0.125], [0.0625, 0.125, 0.0625]])
-    new_arr = convolution(img_arr, kernel)
-    new_img = Image.fromarray(new_arr)
-    new_img.save("static/img/img_now.jpg")
+    import PIL
+    try:
+        img = Image.open("static/img/img_now.jpg")
+        img_arr = np.array(img)
+        blurred_img = cv2.GaussianBlur(img_arr, (5, 5), 0)
+        new_img = Image.fromarray(blurred_img).convert('RGB')
+        new_img.save("static/img/img_now.jpg")
+    except PIL.UnidentifiedImageError as e:
+        print("Error:", e)
 
 
 def sharpening():
     img = Image.open("static/img/img_now.jpg")
-    img_arr = np.asarray(img, dtype=np.int)
-    kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
-    new_arr = convolution(img_arr, kernel)
-    new_img = Image.fromarray(new_arr)
+    img_arr = np.array(img)
+    kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], dtype=np.float32)  # Kernel sharpening
+    sharpened_img = cv2.filter2D(img_arr, -1, kernel)
+    sharpened_img = np.clip(sharpened_img, 0, 255).astype(np.uint8)  # Clip hasil agar tetap dalam rentang 0-255
+    new_img = Image.fromarray(sharpened_img).convert("RGB")  # Konversi ke mode warna RGB
     new_img.save("static/img/img_now.jpg")
 
 
@@ -281,22 +285,24 @@ def cdf(hist):  # cumulative distribution frequency
     cdf = [ele*255/cdf[-1] for ele in cdf]
     return cdf
 
-
 def histogram_equalizer():
     img = cv2.imread('static\img\img_now.jpg', 0)
     my_cdf = cdf(df(img))
     # use linear interpolation of cdf to find new pixel values. Scipy alternative exists
     image_equalized = np.interp(img, range(0, 256), my_cdf)
-    cv2.imwrite('static/img/img_now.jpg', image_equalized)
+    # Convert to RGB mode before saving
+    new_img = Image.fromarray(image_equalized).convert('RGB')
+    new_img.save('static/img/img_now.jpg')
 
 
 def threshold(lower_thres, upper_thres):
-    img = Image.open("static/img/img_now.jpg")
-    img_arr = np.asarray(img)
-    condition = np.logical_and(np.greater_equal(img_arr, lower_thres),
-                               np.less_equal(img_arr, upper_thres))
-    print(lower_thres, upper_thres)
-    img_arr.setflags(write=1)
-    img_arr[condition] = 255
-    new_img = Image.fromarray(img_arr)
-    new_img.save("static/img/img_now.jpg")
+    # Periksa apakah lower_thres dan upper_thres merupakan bilangan bulat positif
+    if isinstance(lower_thres, int) and isinstance(upper_thres, int) and lower_thres >= 0 and upper_thres >= 0:
+        img = Image.open("static/img/img_now.jpg").convert('L')
+        img_arr = np.array(img)
+        _, segmented_img = cv2.threshold(img_arr, lower_thres, upper_thres, cv2.THRESH_BINARY)
+        new_img = Image.fromarray(segmented_img)
+        new_img.save("static/img/img_now.jpg")
+    else:
+        print("Error: Lower and upper thresholds must be positive integers.")
+
