@@ -1,13 +1,20 @@
-{% extends "layout.html" %} {% block body %}
+{% extends "layout.html" %} 
+{% block body %}
 <div class="jumbotron jumbotron-fluid">
-    <div class="container">
-        <h1 class="display-4 align-self-center">Ubah Judul Ini</h1>
-        <p class="lead"> Deskripsi.</p>
-        <form id="" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
-            Ubah Button Ini...
-            <input name="file" type="file" id="inputGroupFile04" accept="image/*">
-            <button type="submit" class="btn btn-primary">Upload</button>
-        </form>
+    <div class="container d-flex justify-content-center">
+        <div class="text-center">
+            <h1 class="display-4">Ubah Judul Ini</h1>
+            <p class="lead">Deskripsi.</p>
+            <form id="uploadForm" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+                <div class="custom-file mb-3">
+                    <input name="file" type="file" class="custom-file-input" id="inputGroupFile04" accept="image/*">
+                    <label class="custom-file-label" for="inputGroupFile04">Pilih file...</label>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

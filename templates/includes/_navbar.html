@@ -1,17 +1,213 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">PeCeDE</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
-        aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/about">About</a>
-            </li>
-        </ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeCeDE</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* CSS untuk menyesuaikan penampilan navbar */
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            background-color: #343a40;
+            padding-top: 56px; /* Tinggi navbar */
+        }
+
+        .sidebar-sticky {
+            padding-top: 0.5rem;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .sidebar .nav-link.active {
+            color: #fff;
+        }
+
+        .main-content {
+            margin-left: 240px; /* Lebar navbar */
+            padding-top: 56px; /* Tinggi navbar */
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 56px; /* Lebar navbar pada layar kecil */
+            }
+            .main-content {
+                margin-left: 56px; /* Lebar navbar pada layar kecil */
+            }
+        }
+        .nav-item hr {
+                margin-top: 0.5rem; /* Atur jarak dari teks di atas garis */
+                margin-bottom: 0.5rem; /* Atur jarak dari teks di bawah garis */
+                border: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.1); /* Atur warna dan ketebalan garis */
+            }
+
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-3 col-md-2 d-none d-md-block bg-dark sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/about">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <hr class="m-0"> <!-- Garis di atas -->
+                            <a class="nav-link" href="#" data-toggle="collapse" data-target="#submenu-umum" aria-expanded="false" aria-controls="submenu-umum" onclick="toggleSubMenu('submenu-umum')">Umum</a>
+                            <div id="submenu-umum" class="collapse">
+                                <ul class="nav flex-column pl-3"> <!-- Submenu -->
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('normal') }}" onclick="event.preventDefault(); document.getElementById('normal-form').submit();">Normal</a>
+                                        <form id="normal-form" action="{{ url_for('normal') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('grayscale') }}" onclick="event.preventDefault(); document.getElementById('grayscale-form').submit();">Grayscale</a>
+                                        <form id="grayscale-form" action="{{ url_for('grayscale') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('zoomin') }}" onclick="event.preventDefault(); document.getElementById('zoomin-form').submit();">Zoom in</a>
+                                        <form id="zoomin-form" action="{{ url_for('zoomin') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('zoomout') }}" onclick="event.preventDefault(); document.getElementById('zoomout-form').submit();">Zoom out</a>
+                                        <form id="zoomout-form" action="{{ url_for('zoomout') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                </ul>
+                            </div>
+                            <hr class="m-0"> <!-- Garis di bawah -->
+                        </li>
+                        
+                        <li class="nav-item">
+                            <hr class="m-0"> <!-- Garis di atas -->
+                            <a class="nav-link" href="#" data-toggle="collapse" data-target="#submenu-pergeseran" aria-expanded="false" aria-controls="submenu-pergeseran" onclick="toggleSubMenu('submenu-pergeseran')">Pergeseran</a>
+                            <div id="submenu-pergeseran" class="collapse">
+                                <ul class="nav flex-column pl-3"> <!-- Submenu -->
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('move_left') }}" onclick="event.preventDefault(); document.getElementById('move-left-form').submit();">Geser Kiri</a>
+                                        <form id="move-left-form" action="{{ url_for('move_left') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('move_right') }}" onclick="event.preventDefault(); document.getElementById('move-right-form').submit();">Geser Kanan</a>
+                                        <form id="move-right-form" action="{{ url_for('move_right') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('move_up') }}" onclick="event.preventDefault(); document.getElementById('move-up-form').submit();">Geser Atas</a>
+                                        <form id="move-up-form" action="{{ url_for('move_up') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('move_down') }}" onclick="event.preventDefault(); document.getElementById('move-down-form').submit();">Geser Bawah</a>
+                                        <form id="move-down-form" action="{{ url_for('move_down') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                </ul>
+                            </div>
+                            <hr class="m-0"> <!-- Garis di bawah -->
+                        </li>   
+                        
+                        
+                        <li class="nav-item">
+                            <hr class="m-0"> <!-- Garis di atas -->
+                            <a class="nav-link" href="#" data-toggle="collapse" data-target="#submenu-penerangan" aria-expanded="false" aria-controls="submenu-penerangan" onclick="toggleSubMenu('submenu-penerangan')">Penerangan</a>
+                            <div id="submenu-penerangan" class="collapse">
+                                <ul class="nav flex-column pl-3"> <!-- Submenu -->
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('brightness_multiplication') }}" onclick="event.preventDefault(); document.getElementById('brightness-multiplication-form').submit();">Terang (*)</a>
+                                        <form id="brightness-multiplication-form" action="{{ url_for('brightness_multiplication') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('brightness_division') }}" onclick="event.preventDefault(); document.getElementById('brightness-division-form').submit();">Gelap (/)</a>
+                                        <form id="brightness-division-form" action="{{ url_for('brightness_division') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('brightness_addition') }}" onclick="event.preventDefault(); document.getElementById('brightness-addition-form').submit();">Terang (+)</a>
+                                        <form id="brightness-addition-form" action="{{ url_for('brightness_addition') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('brightness_substraction') }}" onclick="event.preventDefault(); document.getElementById('brightness-substraction-form').submit();">Gelap (-)</a>
+                                        <form id="brightness-substraction-form" action="{{ url_for('brightness_substraction') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                </ul>
+                            </div>
+                            <hr class="m-0"> <!-- Garis di bawah -->
+                        </li>  
+                        
+                        <li class="nav-item">
+                            <hr class="m-0"> <!-- Garis di atas -->
+                            <a class="nav-link" href="#" data-toggle="collapse" data-target="#submenu-pemrosesan" aria-expanded="false" aria-controls="submenu-pemrosesan" onclick="toggleSubMenu('submenu-pemrosesan')">Pemrosesan Gambar</a>
+                            <div id="submenu-pemrosesan" class="collapse">
+                                <ul class="nav flex-column pl-3"> <!-- Submenu -->
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('histogram_equalizer') }}" onclick="event.preventDefault(); document.getElementById('histogram-equalizer-form').submit();">Histogram Equalizer</a>
+                                        <form id="histogram-equalizer-form" action="{{ url_for('histogram_equalizer') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                </ul>
+                            </div>
+                            <hr class="m-0"> <!-- Garis di bawah -->
+                        </li>   
+
+
+                        <li class="nav-item">
+                            <hr class="m-0"> <!-- Garis di atas -->
+                            <a class="nav-link" href="#" data-toggle="collapse" data-target="#submenu-filter" aria-expanded="false" aria-controls="submenu-filter" onclick="toggleSubMenu('submenu-filter')">Filter Gambar</a>
+                            <div id="submenu-filter" class="collapse">
+                                <ul class="nav flex-column pl-3"> <!-- Submenu -->
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('edge_detection') }}" onclick="event.preventDefault(); document.getElementById('edge-multiplication-form').submit();">Edge Detection</a>
+                                        <form id="edge-multiplication-form" action="{{ url_for('edge_detection') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('blur') }}" onclick="event.preventDefault(); document.getElementById('blur-division-form').submit();">Blur (/)</a>
+                                        <form id="blur-division-form" action="{{ url_for('blur') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('sharpening') }}" onclick="event.preventDefault(); document.getElementById('sharpening-multiplication-form').submit();">Sharpening</a>
+                                        <form id="sharpening-multiplication-form" action="{{ url_for('sharpening') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li> 
+                                </ul>
+                            </div>
+                            <hr class="m-0"> <!-- Garis di bawah -->
+                        </li>  
+                      
+
+                        
+                    </ul>
+                </div>
+            </nav>
+
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 main-content">
+                <!-- Your content here -->
+                <h1>Main Content</h1>
+                <p>This is the main content area.</p>
+            </main>
+        </div>
     </div>
-</nav>
+
+    <!-- JavaScript dependencies for Bootstrap (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function toggleSubMenu(submenuId) {
+            // Mengambil elemen submenu yang diinginkan
+            var submenu = document.getElementById(submenuId);
+            // Mengambil semua submenu kecuali submenu yang diinginkan
+            var otherSubmenus = document.querySelectorAll('.collapse[id^="submenu-"]:not(#' + submenuId + ')');
+            // Menutup semua submenu kecuali yang diinginkan
+            otherSubmenus.forEach(function(submenu) {
+                submenu.classList.remove('show');
+            });
+        }
+    </script>
+</body>
+</html>
