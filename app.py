@@ -7,6 +7,7 @@ from datetime import datetime
 from functools import wraps, update_wrapper
 from shutil import copyfile
 
+
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -77,6 +78,13 @@ def normal():
 def grayscale():
     image_processing.grayscale()
     return render_template("uploaded.html", file_path="img/img_now.jpg")
+
+@app.route("/binary", methods=["POST"])
+@nocache
+def binary():
+    img_path = "static/img/img_now.jpg"
+    image_processing.binary(img_path)  
+    return render_template("uploaded.html", file_path="img/img_now_binary.jpg")
 
 
 @app.route("/zoomin", methods=["POST"])

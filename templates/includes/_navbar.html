@@ -77,6 +77,10 @@
                                         <form id="grayscale-form" action="{{ url_for('grayscale') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
                                     </li>
                                     <li class="nav-item">
+                                        <a class="nav-link" href="{{ url_for('binary') }}" onclick="event.preventDefault(); document.getElementById('binary-form').submit();">Binary</a>
+                                        <form id="binary-form" action="{{ url_for('binary') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                                    </li>
+                                    <li class="nav-item">
                                         <a class="nav-link" href="{{ url_for('zoomin') }}" onclick="event.preventDefault(); document.getElementById('zoomin-form').submit();">Zoom in</a>
                                         <form id="zoomin-form" action="{{ url_for('zoomin') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
                                     </li>

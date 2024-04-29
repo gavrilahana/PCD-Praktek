@@ -18,6 +18,21 @@ def grayscale():
     new_img = Image.fromarray(new_arr)
     new_img.save("static/img/img_now.jpg")
 
+def binary(img_path):
+    img = Image.open(img_path)
+    img_arr = np.asarray(img)
+    r = img_arr[:, :, 0]
+    g = img_arr[:, :, 1]
+    b = img_arr[:, :, 2]
+    new_arr = (r + g + b) // 3  
+    new_arr = (new_arr >= 128) * 255 
+    new_img = Image.fromarray(new_arr.astype('uint8'), 'L')  
+    new_img.save("static/img/img_now_binary.jpg")
+
+
+from PIL import Image
+import numpy as np
+
 
 def is_grey_scale(img_path):
     im = Image.open(img_path).convert('RGB')
@@ -28,6 +43,43 @@ def is_grey_scale(img_path):
             if r != g != b:
                 return False
     return True
+
+def binary(img_path):
+    img = Image.open(img_path)
+    img_arr = np.asarray(img)
+    
+    # Assuming img_arr has shape (height, width)
+    # Check the shape of img_arr
+    print("Shape of img_arr:", img_arr.shape)
+    
+    # Convert the image to grayscale
+    img_gray = img.convert('L')
+    img_arr_gray = np.asarray(img_gray)
+    
+    # Compute the binary image
+    threshold = 128
+    binary_arr = (img_arr_gray >= threshold) * 255
+    
+    # Convert the binary array to an image
+    binary_img = Image.fromarray(binary_arr.astype('uint8'), 'L')
+    
+    # Save the binary image
+    binary_img.save("static/img/img_now_binary.jpg")
+
+
+
+def is_binary(img_path, threshold=128):
+    im = Image.open(img_path).convert('L')  # Convert image to grayscale
+    w, h = im.size
+    for i in range(w):
+        for j in range(h):
+            pixel_value = im.getpixel((i, j))
+            if pixel_value != 0 and pixel_value != 255: 
+                return False
+    return True
+
+
+
 
 
 def zoomin():
