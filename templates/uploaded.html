@@ -1,51 +1,85 @@
 {% extends "layout.html" %}
 
+{% block head %}
+<style>
+    /* CSS untuk penyesuaian tampilan */
+    .jumbotron {
+        background-color: #f8f9fa; /* Warna latar belakang jumbotron */
+        color: #333; /* Warna teks */
+        padding-top: 20px; /* Padding bagian atas */
+        padding-bottom: 20px; /* Padding bagian bawah */
+    }
+    .segmentation-form {
+        padding: 20px; /* Padding formulir */
+        border: 1px solid #ccc; /* Border formulir */
+        border-radius: 10px; /* Border radius formulir */
+        background-color: #fff; /* Warna latar belakang formulir */
+    }
+    .threshold-button {
+        margin-top: 10px; /* Jarak atas tombol thresholding */
+    }
+    .image-container {
+        margin-top: 20px; /* Jarak atas container gambar */
+    }
+    .image-column {
+        margin-bottom: 20px; /* Jarak bawah kolom gambar */
+    }
+    .image-column img {
+        border: 1px solid #ccc; /* Border gambar */
+        border-radius: 5px; /* Border radius gambar */
+        transition: border-color 0.3s ease-in-out; /* Transisi perubahan warna border */
+    }
+    .image-column img:hover {
+        border-color: #007bff; /* Warna border saat dihover */
+    }
+    /* CSS untuk teks di atas formulir */
+    .segmentation-form h4 {
+        margin-top: -20px; /* Menggeser ke atas */
+        margin-bottom: 20px; /* Jarak bawah */
+    }
+    /* CSS untuk label di atas input */
+    .custom-label {
+        position: absolute; /* Mengatur posisi absolut */
+        top: -25px; /* Jarak atas dari input */
+        left: 10px; /* Jarak kiri dari input */
+        font-size: 14px; /* Ukuran font */
+        color: #555; /* Warna teks */
+    }
+
+    /* Background color */
+    body {
+        background-color: #b19cd9; /* Warna ungu pastel */
+    }
+</style>
+{% endblock %}
+
 {% block body %}
 <div class="jumbotron jumbotron-fluid text-center">
-    <h1 class="display-1">Menu</h1>
     <div class="container">
-        <div class="row justify-content-center"> <!-- Menengahkan konten -->
-            <div class="col-md-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
                 <h2>Segmentation</h2>
-                <div class="p-2 flex-fill bd-highlight">
-                    <form id="" action="{{ url_for('thresholding') }}" method="POST" enctype="multipart/form-data">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Batas Bawah</th>
-                                    <th>Batas Atas</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="number" name="lower_thres" placeholder="0-255"></td>
-                                    <td><input type="number" name="upper_thres" placeholder="0-255"></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" class="text-center"><button type="submit" class="btn btn-primary">Thresholding</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </form>
-                    <div class="container-fluid">
-                        <div class="jumbotron jumbotron-fluid">
-                            <div class="row">
-                                <div class="col-lg-8 offset-lg-2"> <!-- Menggunakan offset untuk memposisikan tengah -->
-                                    <h3 class="text-center">After</h3>
-                                    <img class="img-fluid mx-auto d-block" style="max-width: 300%;" src="{{ url_for('static', filename=file_path) }}" alt="image here">
-                                </div>
-                            </div>
+       
+                <div class="segmentation-form">
+                    <form id="" action="{{ url_for('thresholding') }}" method="POST" enctype="multipart/form-data" class="form-inline justify-content-end">
+                        <div class="form-group mx-sm-3 mb-2">
+                            <label for="upper_thres" class="sr-only">Batas Atas</label>
+                            <input type="number" class="form-control" id="upper_thres" name="upper_thres" placeholder="Batas Atas">
                         </div>
-                    </div>
+                        <div class="form-group mx-sm-3 mb-2">
+                            <label for="lower_thres" class="sr-only">Batas Bawah</label>
+                            <input type="number" class="form-control" id="lower_thres" name="lower_thres" placeholder="Batas Bawah">
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2">Thresholding</button>
+                    </form>
                     
                 </div>
+            </div>
+            <div class="col-lg-6 image-column">
+                <h3 class="text-center">After</h3>
+                <img class="img-fluid mx-auto d-block mb-4" style="max-width: 65%;" src="{{ url_for('static', filename=file_path) }}" alt="After image">
             </div>
         </div>
     </div>
 </div>
-
-
-</div>
-<style>
-</style>
 {% endblock %}

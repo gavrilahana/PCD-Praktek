@@ -13,7 +13,7 @@
             top: 0;
             left: 0;
             z-index: 100;
-            background-color: #343a40;
+            background-color: #9370db; /* Ungu pastel */
             padding-top: 56px; /* Tinggi navbar */
         }
 
@@ -159,8 +159,6 @@
                             </div>
                             <hr class="m-0"> <!-- Garis di bawah -->
                         </li>   
-
-
                         <li class="nav-item">
                             <hr class="m-0"> <!-- Garis di atas -->
                             <a class="nav-link" href="#" data-toggle="collapse" data-target="#submenu-filter" aria-expanded="false" aria-controls="submenu-filter" onclick="toggleSubMenu('submenu-filter')">Filter Gambar</a>
@@ -171,7 +169,7 @@
                                         <form id="edge-multiplication-form" action="{{ url_for('edge_detection') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ url_for('blur') }}" onclick="event.preventDefault(); document.getElementById('blur-division-form').submit();">Blur (/)</a>
+                                        <a class="nav-link" href="{{ url_for('blur') }}" onclick="event.preventDefault(); document.getElementById('blur-division-form').submit();">Blur</a>
                                         <form id="blur-division-form" action="{{ url_for('blur') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
                                     </li>
                                     <li class="nav-item">
@@ -188,12 +186,6 @@
                     </ul>
                 </div>
             </nav>
-
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 main-content">
-                <!-- Your content here -->
-                <h1>Main Content</h1>
-                <p>This is the main content area.</p>
-            </main>
         </div>
     </div>
 

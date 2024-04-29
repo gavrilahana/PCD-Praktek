@@ -1,5 +1,59 @@
 {% extends 'layout.html' %}
 
+{% block head %}
+    <style>
+        /* Animasi untuk gerakan tulisan */
+        .move-text {
+            animation: moveText 1s forwards;
+        }
+
+        @keyframes moveText {
+            0% { transform: translateX(-50px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-<p>~isidata anda</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title text-center">Data Mahasiswa</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3" id="nama1">
+                        <h6>Nama: Claudia Berlian Harli</h6>
+                        <h6>NIM: 2215110078</h6>
+                    </div>
+                    <div class="mb-3" id="nama2">
+                        <h6>Nama: Marshya Nurizzatuzzahra</h6>
+                        <h6>NIM: 221511017</h6>
+                    </div>
+                    <div class="mb-3" id="nama3">
+                        <h6>Nama: Gavrila Hana Simanjuntak</h6>
+                        <h6>NIM: 221511011</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Function to add move-text class with a delay
+        function addMoveTextWithDelay(elementId, delay) {
+            setTimeout(() => {
+                document.getElementById(elementId).classList.add('move-text');
+            }, delay);
+        }
+
+        // Add move-text class to each element with a delay
+        addMoveTextWithDelay('nama1', 0);
+        addMoveTextWithDelay('nama2', 500);
+        addMoveTextWithDelay('nama3', 1000);
+    });
+</script>
 {% endblock %}

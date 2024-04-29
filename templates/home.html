@@ -1,20 +1,111 @@
 {% extends "layout.html" %} 
+{% block head %}
+    <style>
+        /* CSS untuk mengatur tampilan tambahan */
+        body {
+            color: #333; /* Warna teks */
+            background-color: #f8f9fa; /* Warna latar belakang */
+            font-family: Arial, sans-serif; /* Font family */
+            overflow: hidden; /* Mengatur overflow */
+        }
+        .jumbotron {
+            background-color: #007bff; /* Warna latar belakang jumbotron */
+            color: #fff; /* Warna teks jumbotron */
+        }
+        .custom-file-label::after {
+            color: #007bff; /* Warna teks label file input */
+        }
+        .btn-primary {
+            background-color: #007bff; /* Warna latar belakang tombol */
+            border-color: #007bff; /* Warna border tombol */
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Warna latar belakang tombol saat dihover */
+            border-color: #0056b3; /* Warna border tombol saat dihover */
+        }
+        /* Animasi untuk menampilkan tulisan */
+        @keyframes showText {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        /* Animasi bergerak tulisan */
+        @keyframes moveText {
+            from {
+                transform: translateY(-20px); /* Mulai dari posisi atas */
+            }
+            to {
+                transform: translateY(0); /* Posisi akhir */
+            }
+        }
+        /* Teks bergerak */
+        .moving-text {
+            animation: moveText 1s ease-out; /* Menerapkan animasi bergerak */
+        }
+        .btn-primary.clicked {
+        background-color: #28a745 !important; /* Warna hijau */
+        border-color: #28a745 !important; /* Warna border hijau */
+    }
+    </style>
+{% endblock %}
 {% block body %}
-<div class="jumbotron jumbotron-fluid">
+<div class="jumbotron jumbotron-fluid" style="background-color: #b19cd9;">
     <div class="container d-flex justify-content-center">
-        <div class="text-center">
-            <h1 class="display-4">Ubah Judul Ini</h1>
-            <p class="lead">Deskripsi.</p>
-            <form id="uploadForm" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
-                <div class="custom-file mb-3">
-                    <input name="file" type="file" class="custom-file-input" id="inputGroupFile04" accept="image/*">
-                    <label class="custom-file-label" for="inputGroupFile04">Pilih file...</label>
-                </div>
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Upload</button>
-                </div>
-            </form>
+        <div class="text-center" style="overflow: hidden;">
+            <!-- Tambahkan id pada elemen h1 -->
+            <h1 id="moving-text" class="display-4"></h1>
+            <p class="lead">PCD</p>
         </div>
     </div>
 </div>
+
+<form id="uploadForm" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data" style="max-width: 300px; margin: auto;">
+    <div class="custom-file mb-3">
+        <input name="file" type="file" class="custom-file-input" id="inputGroupFile04" accept="image/*">
+        <label class="custom-file-label" for="inputGroupFile04">Pilih file...</label>
+    </div>
+    <div id="fileName" class="mb-3"></div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary" id="uploadButton">Upload</button>
+    </div>
+</form>
+
+<script>
+     // JavaScript untuk mengubah warna tombol saat diklik
+     document.getElementById("uploadButton").addEventListener("click", function() {
+        this.classList.add("clicked"); // Menambahkan kelas "clicked" saat tombol diklik
+    });
+    // JavaScript untuk membuat tulisan berhenti setelah selesai ditampilkan
+    var movingText = document.getElementById('moving-text');
+    var text = "Welcome To My QUIZ"; // Teks yang akan ditampilkan
+    var delay = 100; // Waktu tunda antara setiap karakter (ms)
+    var charIndex = 0; // Indeks karakter yang sedang ditampilkan
+    var isTypingComplete = false; // Menandai apakah proses mengetik sudah selesai
+
+    function typeText() {
+        if (charIndex < text.length) {
+            movingText.textContent += text.charAt(charIndex); // Tambahkan karakter ke teks yang ditampilkan
+            charIndex++; // Naikkan indeks karakter
+            setTimeout(typeText, delay); // Panggil fungsi kembali setelah tunda
+        } else {
+            // Teks telah ditampilkan sepenuhnya, berhenti mengetik
+            isTypingComplete = true;
+            // Atur ulang variabel untuk animasi berulang
+            charIndex = 0;
+            setTimeout(function() {
+                movingText.textContent = ""; // Kosongkan teks yang ditampilkan
+                typeText(); // Panggil fungsi untuk mulai mengetik lagi
+            }, 2000); // Jeda sebelum animasi berulang (ms)
+        }
+    }
+
+    // Panggil fungsi untuk mulai mengetik
+    typeText();
+
+    // Tambahkan animasi untuk menampilkan teks
+    movingText.style.animation = 'showText 1s forwards';
+</script>
 {% endblock %}
