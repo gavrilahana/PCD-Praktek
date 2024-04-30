@@ -203,6 +203,47 @@ def thresholding():
     image_processing.threshold(lower_thres, upper_thres)
     return render_template("uploaded.html", file_path="img/img_now.jpg")
 
+@app.route("/erosi", methods=["POST"])
+@nocache
+def erosi():
+    image_processing.erosi()
+    return render_template("uploaded.html", file_path="img/img_now.jpg")
+
+@app.route("/dilasi", methods=["POST"])
+@nocache
+def dilasi():
+    image_processing.dilasi()
+    return render_template("uploaded.html", file_path="img/img_now.jpg")
+
+@app.route("/opening", methods=["POST"])
+@nocache
+def opening():
+    image_processing.opening()
+    return render_template("uploaded.html", file_path="img/img_now.jpg")
+
+@app.route("/closing", methods=["POST"])
+@nocache
+def closing():
+    image_processing.closing()
+    return render_template("uploaded.html", file_path="img/img_now.jpg")
+
+@app.route("/count1", methods=["POST"])
+@nocache
+def count1():
+    num_objects=image_processing.count1()
+    return render_template("uploaded.html", num_objects=num_objects, file_path="img/img_now.jpg")
+
+@app.route("/count2", methods=["POST"])
+@nocache
+def count2():
+    num_objects=image_processing.count2()
+    return render_template("uploaded.html", num_objects=num_objects, file_path="img/img_now.jpg")
+
+@app.route("/count3", methods=["POST"])
+@nocache
+def count3():
+    num_objects=image_processing.count3()
+    return render_template("uploaded.html", num_objects=num_objects, file_path="img/img_now.jpg")
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

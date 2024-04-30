@@ -358,3 +358,71 @@ def threshold(lower_thres, upper_thres):
     else:
         print("Error: Lower and upper thresholds must be positive integers.")
 
+def erosi():
+    img = Image.open("static/img/img_now.jpg")
+    kernel = np.ones((5, 5), np.uint8)
+    erosi_img = cv2.erode(np.array(img), kernel, iterations=1)
+    img = Image.fromarray(erosi_img )
+    img.save("static/img/img_now.jpg")
+
+
+def dilasi():
+    img = Image.open("static/img/img_now.jpg")
+    kernel = np.ones((5, 5), np.uint8)
+    dilasi_img = cv2.dilate(np.array(img), kernel, iterations=1)
+    new_img = Image.fromarray(dilasi_img )
+    new_img.save("static/img/img_now.jpg")
+
+
+def opening():
+    img = Image.open("static/img/img_now.jpg")
+    kernel = np.ones((5, 5), np.uint8)
+    opening_img = cv2.morphologyEx(np.array(img), cv2.MORPH_OPEN, kernel)
+    new_img = Image.fromarray(opening_img)
+    new_img.save("static/img/img_now.jpg")
+
+def closing():
+    img = Image.open("static/img/img_now.jpg")
+    kernel = np.ones((5, 5), np.uint8)
+    closing_img = cv2.morphologyEx(np.array(img), cv2.MORPH_CLOSE, kernel)
+    new_img = Image.fromarray(closing_img )
+    new_img.save("static/img/img_now.jpg")
+
+def count1():
+    img_gray = cv2.imread('static/img/img_now.jpg', cv2.IMREAD_GRAYSCALE)
+    _, thresh = cv2.threshold(img_gray, 200, 255, cv2.THRESH_BINARY)
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    num_objects = len(contours)
+    return num_objects
+
+def count2():
+    img = Image.open("static/img/img_now.jpg").convert('L')
+    img_np = np.array(img)
+    img_blur = cv2.GaussianBlur(img_np, (5, 5), 0)
+    _, thresh = cv2.threshold(img_blur, 0, 255, cv2.THRESH_OTSU)
+    kernel = np.ones((3, 3), np.uint8)
+    opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=2)
+    sure_bg = cv2.dilate(opening, kernel, iterations=1)
+    dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
+    _, sure_fg = cv2.threshold(
+        dist_transform, 0.4*dist_transform.max(), 255, 0)
+    sure_fg = np.uint8(sure_fg)
+    unknown = cv2.subtract(sure_bg, sure_fg)
+
+    _, markers = cv2.connectedComponents(sure_fg)
+    markers = markers + 1
+    markers[unknown == 255] = 0
+    img_color = cv2.cvtColor(img_np, cv2.COLOR_GRAY2BGR)
+    markers = cv2.watershed(img_color, markers)
+
+    num_objects = len(np.unique(markers))
+    img_color[markers == -1] = [255, 0, 0]
+    return num_objects
+
+def count3():
+    img = cv2.imread('static/img/img_now.jpg', 0)
+    _, thresh = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY_INV)
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    num_objects = len(contours)
+    return num_objects
+
