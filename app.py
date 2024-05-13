@@ -2,11 +2,10 @@ import numpy as np
 from PIL import Image
 import image_processing
 import os
-from flask import Flask, render_template, request, make_response
+from flask import Flask, render_template, request, make_response, jsonify
 from datetime import datetime
 from functools import wraps, update_wrapper
 from shutil import copyfile
-
 
 app = Flask(__name__)
 
@@ -245,5 +244,52 @@ def count3():
     num_objects=image_processing.count3()
     return render_template("uploaded.html", num_objects=num_objects, file_path="img/img_now.jpg")
 
+@app.route("/create_digit_images", methods=["GET"])
+@nocache
+def create_digit_images():
+    image_processing.create_digit_images()  # Panggil fungsi create_digit_images dari modul image_processing
+    return "Digit images created successfully"
+
+@app.route("/extract_contours", methods=["GET"])
+@nocache
+def extract_contours():
+    image_processing.extract_contours()  # Panggil fungsi extract_contours dari modul image_processing
+    return "Contours extracted successfully"
+
+@app.route("/freeman_chain_code", methods=["GET"])
+@nocache
+def freeman_chain_code():
+    image_processing.freeman_chain_code()  # Panggil fungsi freeman_chain_code dari modul image_processing
+    return "Freeman Chain Code generated successfully"
+
+@app.route("/zhang_suen_thinning", methods=["GET"])
+@nocache
+def zhang_suen_thinning():
+    image_processing.zhang_suen_thinning()  # Panggil fungsi zhang_suen_thinning dari modul image_processing
+    return "Thinning completed successfully"
+
+@app.route("/save_to_csv", methods=["GET"])
+@nocache
+def save_to_csv():
+    image_processing.save_to_csv()  # Panggil fungsi save_to_csv dari modul image_processing
+    return "Data saved to CSV successfully"
+
+@app.route('/identify_uploaded_image', methods=['POST'])
+@nocache
+def identify_uploaded_image():
+    # Memeriksa apakah ada file gambar yang diunggah
+    if 'image' not in request.files:
+        return jsonify({'error': 'No file uploaded'})
+    
+    # Mengambil file gambar yang diunggah
+    uploaded_file = request.files['image']
+    
+    # Menyimpan file gambar yang diunggah
+    uploaded_file.save("static/img/img_now.jpg")
+    
+    # Mengidentifikasi angka dalam gambar yang diunggah
+    identified_digit = image_processing.identify_uploaded_image("static/img/img_now.jpg")
+    
+    return jsonify({'digit': identified_digit})
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

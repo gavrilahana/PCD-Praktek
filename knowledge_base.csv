@@ -1,0 +1,11 @@
+Digit,FCC,Contour,Thinning
+0,static/fcc/fcc_digit_0.txt,static/contours/contour_digit_0.png,static/thinning/thinned_digit_0.png
+1,static/fcc/fcc_digit_1.txt,static/contours/contour_digit_1.png,static/thinning/thinned_digit_1.png
+2,static/fcc/fcc_digit_2.txt,static/contours/contour_digit_2.png,static/thinning/thinned_digit_2.png
+3,static/fcc/fcc_digit_3.txt,static/contours/contour_digit_3.png,static/thinning/thinned_digit_3.png
+4,static/fcc/fcc_digit_4.txt,static/contours/contour_digit_4.png,static/thinning/thinned_digit_4.png
+5,static/fcc/fcc_digit_5.txt,static/contours/contour_digit_5.png,static/thinning/thinned_digit_5.png
+6,static/fcc/fcc_digit_6.txt,static/contours/contour_digit_6.png,static/thinning/thinned_digit_6.png
+7,static/fcc/fcc_digit_7.txt,static/contours/contour_digit_7.png,static/thinning/thinned_digit_7.png
+8,static/fcc/fcc_digit_8.txt,static/contours/contour_digit_8.png,static/thinning/thinned_digit_8.png
+9,static/fcc/fcc_digit_9.txt,static/contours/contour_digit_9.png,static/thinning/thinned_digit_9.png

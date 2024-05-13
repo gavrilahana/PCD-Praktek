@@ -1,11 +1,12 @@
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import matplotlib.pyplot as plt
 import math
 from collections import Counter
 from pylab import savefig
 import cv2
-
+import os
+import csv
 
 def grayscale():
     img = Image.open("static/img/img_now.jpg")
@@ -425,4 +426,187 @@ def count3():
     contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     num_objects = len(contours)
     return num_objects
+
+def create_digit_images():
+    # Font yang akan digunakan untuk digit
+    font = ImageFont.truetype("arial.ttf", 48)
+    
+    # Ukuran citra (width x height)
+    image_size = (64, 64)
+    
+    for digit in range(10):
+        # Membuat citra kosong
+        image = Image.new("L", image_size, color=255)
+        
+        # Membuat objek Draw
+        draw = ImageDraw.Draw(image)
+        
+        # Menentukan posisi untuk menulis digit agar berada di tengah
+        text_width, text_height = draw.textsize(str(digit), font=font)
+        position = ((image_size[0] - text_width) // 2, (image_size[1] - text_height) // 2)
+        
+        # Menulis digit ke dalam citra
+        draw.text(position, str(digit), fill=0, font=font)
+        
+        # Menyimpan citra
+        image.save(f"static/digits/{digit}.png")
+
+def extract_contours():
+    # Membuat direktori untuk menyimpan hasil ekstraksi kontur
+    if not os.path.exists("static/contours/"):
+        os.makedirs("static/contours/")
+    
+    # Loop untuk setiap citra angka digit
+    for digit in range(10):
+        # Memuat citra
+        image_path = f"static/digits/{digit}.png"
+        img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+        
+        # Melakukan Canny edge detection
+        edges = cv2.Canny(img, 100, 200)
+        
+        # Menyimpan hasil ekstraksi kontur
+        cv2.imwrite(f"static/contours/contour_digit_{digit}.png", edges)
+
+def freeman_chain_code():
+    # Membuat direktori untuk menyimpan hasil FCC
+    if not os.path.exists("static/fcc/"):
+        os.makedirs("static/fcc/")
+    
+    # Loop untuk setiap citra kontur
+    for digit in range(10):
+        # Memuat citra kontur
+        contour_path = f"static/contours/contour_digit_{digit}.png"
+        contour_img = cv2.imread(contour_path, cv2.IMREAD_GRAYSCALE)
+        
+        # Mencari kontur menggunakan OpenCV
+        contours, _ = cv2.findContours(contour_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        
+        # Memperoleh kontur dengan area terbesar
+        largest_contour = max(contours, key=cv2.contourArea)
+        
+        # Menghitung FCC dari kontur
+        fcc = ""
+        for point in largest_contour:
+            x, y = point[0]
+            fcc += str(x) + "," + str(y) + " "
+        
+        # Menyimpan hasil FCC
+        with open(f"static/fcc/fcc_digit_{digit}.txt", "w") as file:
+            file.write(fcc)
+
+def zhang_suen_thinning():
+    if not os.path.exists("static/thinning/"):
+        os.makedirs("static/thinning/")
+    
+    for digit in range(10):
+        contour_path = f"static/contours/contour_digit_{digit}.png"
+        contour_img = cv2.imread(contour_path, cv2.IMREAD_GRAYSCALE)
+        thinned_img = contour_img.copy()
+        
+        changed = True
+        while changed:
+            changed = False
+            thinned_img, changed = apply_zhang_suen_iteration(thinned_img)
+        
+        save_thinned_image(thinned_img, digit)
+
+
+def apply_zhang_suen_iteration(img: np.ndarray) -> tuple[np.ndarray, bool]:
+    temp_img = img.copy()
+    changed = False
+    
+    for i in range(1, img.shape[0] - 1):
+        for j in range(1, img.shape[1] - 1):
+            if is_pixel_to_be_deleted(img, i, j):
+                temp_img[i, j] = 0
+                changed = True
+    
+    return temp_img, changed
+
+
+def is_pixel_to_be_deleted(img: np.ndarray, i: int, j: int) -> bool:
+    # Periksa apakah piksel saat ini adalah piksel putih (255)
+    if img[i, j] == 255:
+        # Hitung jumlah piksel tetangga yang berwarna hitam (0)
+        neighbors_sum = img[i-1:i+2, j-1:j+2].sum()
+        # Periksa apakah jumlah tetangga adalah di antara 2 dan 6
+        if 2 <= neighbors_sum <= 6:
+            # Periksa pola piksel sesuai dengan aturan algoritma Zhang-Suen
+            if ((img[i-1, j] == 0 or img[i, j+1] == 0) and img[i+1, j] == 0) or ((img[i-1, j] == 0 or img[i, j-1] == 0) and img[i+1, j] == 0):
+                return True
+    return False
+
+
+def save_thinned_image(img: np.ndarray, digit: int) -> None:
+    cv2.imwrite(f"static/thinning/thinned_digit_{digit}.png", img)
+
+def save_to_csv():
+    # Membuka file CSV untuk disimpan
+    with open('knowledge_base.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Digit', 'FCC', 'Contour', 'Thinning'])
+        
+        # Loop untuk setiap digit
+        for digit in range(10):
+            # Simpan data ke dalam baris CSV
+            fcc_path = f"static/fcc/fcc_digit_{digit}.txt"
+            contour_path = f"static/contours/contour_digit_{digit}.png"
+            thinning_path = f"static/thinning/thinned_digit_{digit}.png"
+            writer.writerow([digit, fcc_path, contour_path, thinning_path])
+
+def identify_uploaded_image(image_path):
+    # Implementasi fungsi untuk mengidentifikasi angka berdasarkan FCC
+    
+    # Memuat citra yang diunggah
+    uploaded_img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    
+    # Melakukan Canny edge detection pada citra yang diunggah
+    uploaded_edges = cv2.Canny(uploaded_img, 100, 200)
+    
+    # Menyimpan citra kontur yang diunggah
+    cv2.imwrite("static/contours/uploaded_contour.png", uploaded_edges)
+    
+    # Menghitung FCC dari kontur yang diunggah
+    uploaded_fcc = ""
+    contours, _ = cv2.findContours(uploaded_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    largest_contour = max(contours, key=cv2.contourArea)
+    for point in largest_contour:
+        x, y = point[0]
+        uploaded_fcc += str(x) + "," + str(y) + " "
+    
+    # Menyimpan hasil FCC dari kontur yang diunggah
+    with open("static/fcc/uploaded_fcc.txt", "w") as file:
+        file.write(uploaded_fcc)
+    
+    # Membandingkan FCC dari citra yang diunggah dengan FCC dari setiap digit
+    min_distance = float('inf')
+    identified_digit = None
+    for digit in range(10):
+        # Memuat FCC dari digit
+        with open(f"static/fcc/fcc_digit_{digit}.txt", "r") as file:
+            digit_fcc = file.read()
+        
+        # Menghitung jarak antara FCC dari citra yang diunggah dan FCC dari digit
+        distance = calculate_fcc_distance(uploaded_fcc, digit_fcc)
+        
+        # Memperbarui digit yang teridentifikasi jika jaraknya lebih kecil
+        if distance < min_distance:
+            min_distance = distance
+            identified_digit = digit
+    
+    return identified_digit 
+
+def calculate_fcc_distance(fcc1, fcc2):
+    # Menghitung jarak antara dua rangkaian Freeman Chain Code
+    fcc1_points = fcc1.split()
+    fcc2_points = fcc2.split()
+    distance = 0
+    for p1, p2 in zip(fcc1_points, fcc2_points):
+        x1, y1 = map(int, p1.split(","))
+        x2, y2 = map(int, p2.split(","))
+        distance += ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+    distance = sum((int(a) - int(b)) ** 2 for a, b in zip(fcc1.split(), fcc2.split()))
+    return distance
+
 
