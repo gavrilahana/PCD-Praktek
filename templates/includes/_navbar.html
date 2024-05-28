@@ -222,9 +222,16 @@
                             <form id="count3-form" action="{{ url_for('count3') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
                         </li>  
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('identify_uploaded_image') }}" onclick="event.preventDefault(); document.getElementById('count3-form').submit();">Angka</a>
-                            <form id="count3-form" action="{{ url_for('identify_uploaded_image') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
-                        </li>  
+                            <a class="nav-link" href="{{ url_for('identify_uploaded_image') }}" onclick="event.preventDefault(); document.getElementById('identify_uploaded_image-form').submit();">Angka</a>
+                            <form id="identify_uploaded_image-form" action="{{ url_for('identify_uploaded_image') }}" method="POST" enctype="multipart/form-data" style="display: none;"></form>      
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('emoji-form').submit();">Emoji</a>
+                            <form id="emoji-form" action="{{ url_for('emoji') }}" method="POST" enctype="multipart/form-data" style="display: none;">
+                                <input type="file" name="file" />
+                                <input type="submit" value="Upload" />
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </nav>
