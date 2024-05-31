@@ -427,6 +427,8 @@ def count3():
     num_objects = len(contours)
     return num_objects
 
+
+
 def create_digit_images():
     # Font yang akan digunakan untuk digit
     font = ImageFont.truetype("arial.ttf", 48)
