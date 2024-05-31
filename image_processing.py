@@ -611,4 +611,196 @@ def calculate_fcc_distance(fcc1, fcc2):
     distance = sum((int(a) - int(b)) ** 2 for a, b in zip(fcc1.split(), fcc2.split()))
     return distance
 
+def generate_chaincode(thickness):
+    chain = []
+    for t in thickness:
+        if t == 1:
+            chain.append(1)
+        else:
+            chain.extend([0, 1])
+    return chain
 
+def process_image1(file_path):
+    try:
+        # Membaca gambar baru
+        new_image = cv2.imread(file_path)
+        original_image = new_image.copy()  # Copy the original image
+
+        # Mengubah gambar baru menjadi skala abu-abu
+        new_gray = cv2.cvtColor(new_image, cv2.COLOR_BGR2GRAY)
+
+        # Terapkan deteksi tepi menggunakan Canny edge detector
+        new_edges = cv2.Canny(new_gray, 50, 150)
+
+        # Temukan kontur menggunakan fungsi findContours
+        new_contours, _ = cv2.findContours(new_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # Gambar kontur di atas gambar asli
+        cv2.drawContours(new_image, new_contours, -1, (0, 255, 0), 2)
+
+        # Simpan gambar kontur
+        cv2.imwrite("static/img/img_now_contours.jpg", new_image)
+
+        # Tentukan ketebalan kontur dengan mengukur luasnya
+        new_thickness = []
+        for new_contour in new_contours:
+            area = cv2.contourArea(new_contour)
+            # Misalnya, ambil area yang lebih besar dari 100 piksel sebagai kontur tebal
+            if area > 100:
+                new_thickness.append(1)
+            else:
+                new_thickness.append(0)
+
+        # Hasilkan chaincode berdasarkan ketebalan kontur
+        new_chain = generate_chaincode(new_thickness)
+        return new_chain, original_image
+    except Exception as e:
+        print(f"Error processing image: {e}")
+        return None, None
+    
+def process_image(file_path):
+    # Membaca gambar baru
+    new_image = cv2.imread(file_path)
+
+    # Mengubah gambar baru menjadi skala abu-abu
+    new_gray = cv2.cvtColor(new_image, cv2.COLOR_BGR2GRAY)
+
+    # Terapkan deteksi tepi menggunakan Canny edge detector
+    new_edges = cv2.Canny(new_gray, 50, 150)
+
+    # Temukan kontur menggunakan fungsi findContours
+    new_contours, _ = cv2.findContours(new_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Tentukan ketebalan kontur dengan mengukur luasnya
+    new_thickness = []
+    for new_contour in new_contours:
+        area = cv2.contourArea(new_contour)
+        # Misalnya, ambil area yang lebih besar dari 100 piksel sebagai kontur tebal
+        if area > 100:
+            new_thickness.append(1)
+        else:
+            new_thickness.append(0)
+
+    # Hasilkan chaincode berdasarkan ketebalan kontur
+    new_chain = generate_chaincode(new_thickness)
+    return new_chain
+
+knowledge_base = {
+    "disappointed_relieved":[
+        [0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "blush": [
+         [0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+   "expressionless":[
+       [0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "face_with_raised_eyebrow":[
+        [1],
+    ],
+    "face_with_rolling_eyes":[
+        [0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "grin":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "grinning":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "heart_eyes":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "hugging_face":[
+        [0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "hushed":[
+       [0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],  
+    ],
+    "joy":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "kissing":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+   "kissing_closed_eyes":[
+         [0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "kissing_heart":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    " kissing_smiling_eyes":[
+        [0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "laughing":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "neutral_face":[
+        [0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "no_mouth":[
+        [0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "open_mouth":[
+        [0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "persevere":[
+        [0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "relaxed":[
+        [0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "rolling_on_the_floor_laughing":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "sleeping":[
+        [0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1],
+    ],
+    "sleepy":[
+        [0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "slightly_smiling_face":[
+        [0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "smile":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+
+    "smiley":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+
+    "smirk":[
+        [0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+   "star-struck":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
+    ],
+    "sunglasses":[
+        [0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "sweat_smile":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "thinking_face":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "tired_face":[
+        [0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "wink":[
+        [0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "yum":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    "zipper_mouth_face":[
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+    ],
+    # Tambahkan lebih banyak label emoji dengan chaincode mereka
+}
+def match_chaincode(new_chain, knowledge_base):
+    for label, chaincodes in knowledge_base.items():
+        for chaincode in chaincodes:
+            if new_chain == chaincode:
+                return label
+    return "Tidak dikenali"
