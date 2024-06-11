@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <!-- your head content here -->
+{% endblock %}
+
+{% block body %}
+    <!-- your body content here -->
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2>Pilih Fitur yang Diinginkan pada Navbar</h2>
+                <p>Setelah mengunggah file, silakan pilih fitur yang diinginkan pada navbar di atas.</p>
+                <!-- Displaying the image -->
+                <img src="{{ url_for('static', filename='img/img_now.jpg') }}" alt="Uploaded Image" class="img-fluid">
+            </div>
+        </div>
+    </div>
+{% endblock %}

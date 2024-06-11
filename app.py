@@ -1,11 +1,10 @@
 import numpy as np
-from PIL import Image
-import image_processing
 import os
 from flask import Flask, render_template, request, make_response, jsonify
 from datetime import datetime
 from functools import wraps, update_wrapper
 from shutil import copyfile
+import image_processing
 
 app = Flask(__name__)
 
@@ -62,7 +61,7 @@ def upload():
     for file in request.files.getlist("file"):
         file.save("static/img/img_now.jpg")
     copyfile("static/img/img_now.jpg", "static/img/img_normal.jpg")
-    return render_template("uploaded.html", file_path="img/img_now.jpg")
+    return render_template("info.html", file_path="img/img_now.jpg")
 
 
 @app.route("/normal", methods=["POST"])
@@ -415,5 +414,11 @@ def emoji():
     new_image = "static/img/img_now_contours.jpg"
     predicted_label = image_processing.match_chaincode(new_chain, knowledge_base)
     return render_template('uploaded.html', file_path=file_path, predicted_label=predicted_label, new_image=new_image, foto=foto)
+
+@app.route("/face_detection", methods=["POST"])
+def face_detection():
+    image_processing.detect_faces()
+    return render_template("face_detection.html", file_path="static/img/img_now.jpg")
+
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

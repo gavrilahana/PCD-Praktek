@@ -3,4 +3,4 @@ numpy
 Pillow
 matplotlib
 opencv-python
-
+face_recogition

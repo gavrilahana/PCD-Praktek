@@ -1,3 +1,4 @@
+import face_recognition
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 import matplotlib.pyplot as plt
@@ -802,3 +803,26 @@ def match_chaincode(new_chain, knowledge_base):
             if new_chain == chaincode:
                 return label
     return "Tidak dikenali"
+
+def detect_faces():
+    # Load the image file into a numpy array
+    image_path = "static/img/img_now.jpg"  # Ganti dengan path gambar yang benar
+    image = face_recognition.load_image_file(image_path)
+
+    # Find all facial features in all the faces in the image
+    face_landmarks_list = face_recognition.face_landmarks(image)
+
+    # Create a PIL image draw object so we can draw on the picture
+    pil_image = Image.fromarray(image)
+    draw = ImageDraw.Draw(pil_image)
+
+    for face_landmarks in face_landmarks_list:
+        # Let's trace out each facial feature in the image with a line!
+        for facial_feature in face_landmarks.keys():
+            draw.line(face_landmarks[facial_feature], width=5)
+    
+    # Save the modified image to the desired location
+    save_path = "static/img/img_now.jpg"  # Ganti dengan lokasi yang diinginkan
+    pil_image.save(save_path)
+    
+    return save_path

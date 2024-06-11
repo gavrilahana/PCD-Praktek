@@ -232,14 +232,19 @@
                                 <input type="submit" value="Upload" />
                             </form>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/templates/face_detection.html" onclick="event.preventDefault(); document.getElementById('face_detection-form').submit();">Face Detection</a>
+                            <form id="face_detection-form" action="{{ url_for('face_detection') }}" method="POST" enctype="multipart/form-data" style="display: none;">
+                                <input type="file" name="file" />
+                                <input type="submit" value="Upload" />
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </nav>
 
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 main-content">
                 <!-- Your content here -->
-                <h1>Main Content</h1>
-                <p>This is the main content area.</p>
             </main>
         </div>
     </div>
@@ -261,4 +266,4 @@
         }
     </script>
 </body>
-</html
+</htmlAC

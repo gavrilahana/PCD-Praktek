@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <style>
+        /* Animasi untuk gerakan tulisan */
+        .move-text {
+            animation: moveText 1s forwards;
+        }
+
+        @keyframes moveText {
+            0% { transform: translateX(-50px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title text-center">Face Detection Result</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Tambahkan gambar hasil deteksi di sini -->
+                    <img src="{{ file_path }}" class="img-fluid" alt="Face Detection Result">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
