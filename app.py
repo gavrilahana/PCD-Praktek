@@ -243,6 +243,7 @@ def count3():
     num_objects=image_processing.count3()
     return render_template("uploaded.html", num_objects=num_objects, file_path="img/img_now.jpg")
 
+
 @app.route("/create_digit_images", methods=["GET"])
 @nocache
 def create_digit_images():
